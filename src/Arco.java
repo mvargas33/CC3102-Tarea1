@@ -11,6 +11,16 @@ public class Arco {
 
     }
 
+    public char getSymbol() {
+        return symbol;
+    }
+    public State getTo(){
+        return to;
+    }
+    public State getFrom(){
+        return from;
+    }
+
     public void print(){
         System.out.println(this.from.getNameStr() + " -- " + this.symbol + " --> " + this.to.getNameStr());
     }

@@ -37,28 +37,28 @@ public class Main {
             stack = pushOperator(stack, input, i);  // Si es operador
             if(stack == null){  // Si no es nada, retorna error
               System.out.println("ERROR: La cagaste viejito --> Stack null al leer operando");
-              return;
+              return null;
             }
           }
         }
         Tree tree= stack.pop();  // Arbol final
         if(!stack.isEmpty()){ // Error
           System.out.println("ERROR: La cagaste viejita --> Stack no null al terminar");
-          return;
+          return null;
         }
         return tree;
     }
 
 
     // Retorna un stack de arboles con los operandos aplicados
-    public Stack<Tree> pushOperator(Stack<Tree> stack, char[] in, int i){
+    public static Stack<Tree> pushOperator(Stack<Tree> stack, char[] in, int i){
       char op =in[i];
-      if (op.equals('*')){
+      if (op==('*')){
         Tree lson = stack.pop();  // Sacar expresion del stack
         Tree node = new Tree(op, lson, null); // Crear nodo con op, e hijo izq expresion
         stack.push(node); // Se apila
         return stack;
-      }else if (op.equals('|') || op.equals('.')){
+      }else if (op==('|') || op==('.')){
         Tree ldaughter = stack.pop();
         Tree rdaughter = stack.pop();
         Tree node = new Tree(op, ldaughter, rdaughter);
@@ -70,8 +70,5 @@ public class Main {
       }
     }
 
-    public boolean isChar(char c){
-      if
-    }
 
 }

@@ -16,6 +16,9 @@ public class State {
         this.end = end;
         this.start = start;
     }
+    public void addArco(Arco a){
+        this.arcos.add(a);
+    }
 
     public int getName(){
         return this.name;
