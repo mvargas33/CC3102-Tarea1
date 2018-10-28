@@ -130,7 +130,7 @@ public class AFD {
 
     public void print(){
         System.out.println(" -- AFD -- ");
-        System.out.println("Estado inicial: " + s.getNameStr());
+        System.out.println("Estado inicial: " + s.toString());
         StringBuilder finales = new StringBuilder();
         for(int y = 0; y < this.F.size(); y++){
             finales.append(F.get(y).toString());finales.append(" ");
