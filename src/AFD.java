@@ -4,8 +4,9 @@ public class AFD {
     private ArrayList<QState> QStates;  // Lista de QStates --> QState: Lista de estados
     private ArrayList<Cuerda> delta;    // Lista de Cuerdas --> Cuerda: Arco entre QStates
     private String sigma;               // Alfabeto
-    private State s;                    // Estado inicial
-    private ArrayList<State> F;         // Lista de estados finales
+    private QState s;                   // Estado inicial
+    private ArrayList<QState> F;        // Lista de estados finales
+    private QState sumidero;            // Estado cuantico tipo sumidero
     private int q;
 
     public AFD(String sigma){
@@ -14,6 +15,8 @@ public class AFD {
         this.sigma = sigma;
         this.s = null;
         this.F = new ArrayList<>();
+        this.sumidero = new QState(-1, new State(-1));
+        delta.add(new Cuerda(sumidero, '$', sumidero));
         this.q = 0;
     }
 
@@ -25,6 +28,16 @@ public class AFD {
             }
         }
         return false;
+    }
+
+    public void iterativeFinalQState(State estadoFinal){
+        for(int i = 0; i < QStates.size(); i++){        // Para cada QState en el AFD
+            QState qstate = QStates.get(i);
+            ArrayList<State> s = qstate.getStates();    // Se extrae su lista de estados
+            if(s.contains(estadoFinal)){                // Si contiene el estado final
+                F.add(qstate);                          // Se marca como final
+            }
+        }
     }
 
     public QState exist(QState qstate){
@@ -57,9 +70,11 @@ public class AFD {
                     Arco arr = acc.get(u);                              // Se rescata el arco
                     if (arr.getSymbol() == c) {                         // Si coincide con el símbolo buscado
                         State to = arr.getTo();                         // Se rescata el estado de llegada
-                        newQState.getStates().add(to);                  // Se añade al estado cuantico del símbolo a newQState
-                        ArrayList<State> epsilon = scope(to);           // Se rescatan sus transiciones epsilon del estado de llegada
-                        newQState.getStates().addAll(epsilon);          // Se añaden las transiciones epsilon a newQState
+                        if(!newQState.getStates().contains(to)){        // Si newQState no contiene al estado
+                            newQState.getStates().add(to);              // Se añade al estado cuantico del símbolo a newQState
+                            newQState.getStates().removeAll(scope(to)); // Se eliminan duplicados
+                            newQState.getStates().addAll(scope(to));    // Se añaden las transiciones epsilon a newQState
+                        }
                     }
                 }
             }
@@ -74,12 +89,9 @@ public class AFD {
                     Cuerda cuerda = new Cuerda(qState, c, check);       // Se crea una cuerda entre el estado cuantico original y el final con el símbolo analizado
                     this.delta.add(cuerda);                             // Se añade la cuerda al AFD, no se hace recursión porque ya se hizo!
                 }
-            }else{                                                      // Sino, newQState se tiene que declarar sumidero para ese símbolo
-                this.QStates.add(newQState);                            // Se añade el sumidero al AFD
-                Cuerda haciaSumidero = new Cuerda(qState, c, newQState);// Se crea la cuerda hacia el sumidero con el símbolo
-                Cuerda w = new Cuerda(newQState, '$', newQState);// $ Representa el alfabeto completo
+            }else{                                                      // Sino, creamos una cuerda entre el esato y el sumidero
+                Cuerda haciaSumidero = new Cuerda(qState, c, sumidero); // Se crea la cuerda hacia el sumidero con el símbolo
                 delta.add(haciaSumidero);                               // Se añade la cuerda hacia el sumidero al AFD
-                delta.add(w);                                           // Se añade la cuerda del alfabeto al AFD
             }
         }
     }
@@ -87,9 +99,15 @@ public class AFD {
     public void AFNDtoAFD(AFND nd){
         State estadoInicial = nd.getS();                                // Se rescata el estado inicial del AFND
         QState qState = new QState(this.QStates.size(), estadoInicial); // Se crea un estado cúantico con el estado como base
+        s = qState;                                                     // Se declara como estado inicial
+        qState.getStates().removeAll(scope(estadoInicial));             // Eliminar duplicados
         qState.getStates().addAll(scope(estadoInicial));                // Se añaden las transiciones epsilon al estado cuantico
         this.QStates.add(qState);                                       // Se añade el estado cuantico a AFD
         QStateRecursion(qState);                                        // Se generan los estados cuanticos creados a partir de qState
+        ArrayList<State> f = nd.getF();                                 // Se extraen los estados finales
+        for(int i = 0; i < f.size(); i++){                              // Para cada estado final del AFND
+            iterativeFinalQState(f.get(i));                             // Se marcan como finales los del AFD
+        }
     }
 
 
@@ -103,6 +121,7 @@ public class AFD {
             State fin = arc.getTo();
             if (arc.getSymbol() == '#' && !quantums.contains(fin)){ // Si hay un arco con epsilon y la llegada no la agregué antes
                 quantums.add(fin);                      // Se añade el estado de llegada
+                quantums.removeAll(scope(fin));         // Se eliminan duplicados
                 quantums.addAll(scope(fin));            // Añadir recursivamente las transciciones a partir de llegada
             }
         }
@@ -110,6 +129,13 @@ public class AFD {
     }
 
     public void print(){
+        System.out.println(" -- AFD -- ");
+        System.out.println("Estado inicial: " + s.getNameStr());
+        StringBuilder finales = new StringBuilder();
+        for(int y = 0; y < this.F.size(); y++){
+            finales.append(F.get(y).toString());finales.append(" ");
+        }
+        System.out.println("Estados finales: " + finales);
         for(int i = 0; i < delta.size(); i++){
             delta.get(i).print();
         }

@@ -22,7 +22,13 @@ public class Cuerda {
     }
 
     public void print(){
-        System.out.println(from.toString() + " --- " + symbol + " ---> " + to.toString());
+        if(symbol == '\n'){
+            System.out.println(from.toString() + " --- " + "\\" + "n" + " --> " + to.toString());
+        }else if(symbol == ' '){
+            System.out.println(from.toString() + " --- " + "\\" + "b" + " --> " + to.toString());
+        }else{
+            System.out.println(from.toString() + " --- " + symbol + " ---> " + to.toString());
+        }
     }
 
 }

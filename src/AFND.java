@@ -165,6 +165,7 @@ public class AFND {
     }
 
     public void print(){
+        System.out.println(" -- AFND -- ");
         System.out.println("Estado inicial: " + this.s.getNameStr());
         StringBuilder finales = new StringBuilder();
         for(int y = 0; y < this.F.size(); y++){
