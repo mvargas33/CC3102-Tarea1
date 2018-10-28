@@ -50,6 +50,6 @@ public class State {
     }
 
     public void print(){
-        System.out.println(" " + getNameStr() + " ");
+        System.out.println(getNameStr());
     }
 }

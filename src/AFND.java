@@ -45,11 +45,12 @@ public class AFND {
     }
 
     public ArrayList<State> Thompson(Tree node){
+
         if(node == null) {
             ArrayList<State> start_end = new ArrayList<>();
-            State start = new State(K.size() - 1);
-            State end = new State(K.size() - 1);
+            State start = new State(K.size());
             start_end.add(start);
+            State end = new State(K.size());
             start_end.add(end);
             this.K.add(start);
             this.K.add(end);
@@ -57,25 +58,25 @@ public class AFND {
         }
         else if(node.right==null && node.left==null && isInSigma(node.name)){
             ArrayList<State> start_end = new ArrayList<>();
-            State start = new State(K.size() - 1);
-            State end = new State(K.size() - 1);
+            State start = new State(K.size());
+            this.K.add(start);
+            State end = new State(K.size());
+            this.K.add(end);
             Arco arc= new Arco(start, node.name, end);
             start.addArco(arc);
             this.delta.add(arc);
-            this.K.add(start);
-            this.K.add(end);
             start_end.add(start);
             start_end.add(end);
             return start_end;
 
         }
-        else if (node.left!=null && node.right!=null && node.name=='｜'){
+        else if (node.left!=null && node.right!=null && node.name=='|'){
             ArrayList<State> start_end = new ArrayList<>();
             ArrayList<State> start_end_left = Thompson(node.left);
             ArrayList<State> start_end_right = Thompson(node.right);
-            State start = new State(K.size() - 1);
-            State end = new State(K.size() - 1);
+            State start = new State(K.size());
             this.K.add(start);
+            State end = new State(K.size());
             this.K.add(end);
             Arco arc1 = new Arco(start, '#', start_end_left.get(0));
             Arco arc2 = new Arco(start, '#', start_end_right.get(0));
@@ -95,7 +96,7 @@ public class AFND {
 
         }
         else if (node.left!=null && node.right!=null && node.name=='.'){
-            ArrayList<State> start_end = new ArrayList<State>();
+            ArrayList<State> start_end = new ArrayList<>();
             ArrayList<State> start_end_left = Thompson(node.left);
             ArrayList<State> start_end_right = Thompson(node.right);
             Arco arc1 = new Arco(start_end_left.get(1), '#', start_end_right.get(0));
@@ -108,9 +109,9 @@ public class AFND {
         }
         else if (node.left!=null && node.right==null && node.name=='*'){
             ArrayList<State> start_end = new ArrayList<>();
-            State start = new State(K.size() - 1);
-            State end = new State(K.size() - 1);
+            State start = new State(K.size());
             this.K.add(start);
+            State end = new State(K.size());
             this.K.add(end);
             ArrayList<State> start_end_left = Thompson(node.left);
             Arco arc1 = new Arco(start, '#', start_end_left.get(0));
@@ -125,9 +126,11 @@ public class AFND {
             this.delta.add(arc2);
             this.delta.add(arc3);
             this.delta.add(arc4);
+            start_end.add(start);
+            start_end.add(end);
             return start_end;
         }else{
-            System.out.println("kgzo en el arbol");
+            System.out.println("Problema en el arbol");
             return null;
         }
     }
@@ -143,7 +146,7 @@ public class AFND {
                     noneArrives = false;                            // Si lo es, se ignorará
                 }
             }
-            if(noneArrives){                                        // Si no, se obtienen todos sus arcos salientes
+            if(noneArrives && !s.isStart()){                        // Si no, se obtienen todos sus arcos salientes
                 ArrayList<Arco> arcos_inutiles = s.getArcos();
                 for(int r = 0; r < arcos_inutiles.size(); r++){
                     Arco inutil = arcos_inutiles.get(r);
@@ -154,10 +157,22 @@ public class AFND {
         }
     }
 
+    public void ERtoAFND(Tree tree){
+        ArrayList<State> states = this.Thompson(tree);
+        this.s = states.get(0);this.s.setToStart();
+        this.F.add(states.get(1));F.get(0).setToEnd();
+    }
+
     public void print(){
-        System.out.println("States and arcos: \n");
+        System.out.println("Estado inicial: " + this.s.getNameStr());
+        StringBuilder finales = new StringBuilder();
+        for(int y = 0; y < this.F.size(); y++){
+            finales.append(F.get(y).getNameStr());finales.append(" ");
+        }
+        System.out.println("Estado final  : " + finales.toString());
+
         for(int i = 0; i < this.K.size(); i++){
-            K.get(i).print();
+            //K.get(i).print();
             ArrayList<Arco> a = K.get(i).getArcos();
             for(int j = 0; j < a.size(); j++){
                 a.get(j).print();

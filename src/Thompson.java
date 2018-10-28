@@ -22,7 +22,7 @@ public class Thompson {
 
     public Tree createTree(){
         Stack<Tree> stack = new Stack();  // Stack vacío
-        int n = this.reg_exp.length; // Calculo de simbolos
+        int n = this.reg_exp.length - 1; // Calculo de simbolos
         for (int i = n; i > -1; i--){
             if(isInUniverse(this.reg_exp[i])){ // Si es simbolo válido
                 Tree node = new Tree(this.reg_exp[i]); // Nodo con char
@@ -30,14 +30,14 @@ public class Thompson {
             }else{
                 stack = pushOperator(stack, this.reg_exp, i);  // Si es operador
                 if(stack == null){  // Si no es nada, retorna error
-                    System.out.println("ERROR: La cagaste viejito --> Stack null al leer operando");
+                    System.out.println("ERROR: Stack null al leer operando");
                     return null;
                 }
             }
         }
         Tree tree= stack.pop();  // Arbol final
         if(!stack.isEmpty()){ // Error
-            System.out.println("ERROR: La cagaste viejita --> Stack no null al terminar");
+            System.out.println("ERROR: Stack no null al terminar");
             return null;
         }
         return tree;

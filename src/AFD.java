@@ -70,8 +70,8 @@ public class AFD {
     }
 
     public ArrayList<State> scope(State state){
-        ArrayList<Arco> arcs=state.getArcos();
-        ArrayList<State> quantums=new ArrayList<>();
+        ArrayList<Arco> arcs = state.getArcos();
+        ArrayList<State> quantums = new ArrayList<>();
         quantums.add(state);
 
         for (int a =0; a<arcs.size(); a++){
@@ -83,5 +83,6 @@ public class AFD {
             }
 
         }
+        return quantums;
     }
 }

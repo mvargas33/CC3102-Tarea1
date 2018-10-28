@@ -8,7 +8,7 @@ public class Main {
 
         Scanner sc = new Scanner(System.in);
         String s = sc.nextLine();
-        String [] input = s.split(" ");
+        String [] input = s.split("\n");
         char [] reg_exp = input[0].toCharArray(); // Regular expresion
 
         // Declaración del alfabeto y creación de un árbol de la Expresión Regular
@@ -19,8 +19,8 @@ public class Main {
 
         // Creación del AFND a partir del árbol de la Expresión Regular
 
-        AFND nd = new AFND(universe);
-        nd.Thompson(tri);
+        AFND nd = new AFND(universe);   // Se define el alfabeto del AFND
+        nd.ERtoAFND(tri);               // Se le pasa el árbol que contiene la ER y se crea el AFND
         nd.print();
         nd.cleanUpAFND();
         nd.print();
