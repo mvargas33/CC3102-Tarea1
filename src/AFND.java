@@ -46,7 +46,7 @@ public class AFND {
 
     public ArrayList<State> Thompson(Tree node){
         if(node == null) {
-            ArrayList<State> start_end = new ArrayList<State>();
+            ArrayList<State> start_end = new ArrayList<>();
             State start = new State(K.size() - 1);
             State end = new State(K.size() - 1);
             start_end.add(start);
@@ -55,9 +55,8 @@ public class AFND {
             this.K.add(end);
             return start_end;
         }
-
         else if(node.right==null && node.left==null && isInSigma(node.name)){
-            ArrayList<State> start_end = new ArrayList<State>();
+            ArrayList<State> start_end = new ArrayList<>();
             State start = new State(K.size() - 1);
             State end = new State(K.size() - 1);
             Arco arc= new Arco(start, node.name, end);
@@ -68,9 +67,10 @@ public class AFND {
             start_end.add(start);
             start_end.add(end);
             return start_end;
+
         }
         else if (node.left!=null && node.right!=null && node.name=='｜'){
-            ArrayList<State> start_end = new ArrayList<State>();
+            ArrayList<State> start_end = new ArrayList<>();
             ArrayList<State> start_end_left = Thompson(node.left);
             ArrayList<State> start_end_right = Thompson(node.right);
             State start = new State(K.size() - 1);
@@ -107,7 +107,7 @@ public class AFND {
 
         }
         else if (node.left!=null && node.right==null && node.name=='*'){
-            ArrayList<State> start_end = new ArrayList<State>();
+            ArrayList<State> start_end = new ArrayList<>();
             State start = new State(K.size() - 1);
             State end = new State(K.size() - 1);
             this.K.add(start);
@@ -132,6 +132,38 @@ public class AFND {
         }
     }
 
+    // Elimina del AFND los estados que nunca son alcanzados (aquellos que no tienen ningún arco llegando a sí mismos)
+    public void cleanUpAFND(){
+        for(int i = 0; i < this.K.size(); i++){                     // Para cada estado
+            State s = this.K.get(i);
+            boolean noneArrives = true;                             // Se asume que nada llega a eĺ
+            for(int j = 0; j < this.delta.size(); j++){             // Se busca entre todos los arcos
+                Arco a = delta.get(j);
+                if(a.getTo().getName() == s.getName()){             // Si es recepción de alguien
+                    noneArrives = false;                            // Si lo es, se ignorará
+                }
+            }
+            if(noneArrives){                                        // Si no, se obtienen todos sus arcos salientes
+                ArrayList<Arco> arcos_inutiles = s.getArcos();
+                for(int r = 0; r < arcos_inutiles.size(); r++){
+                    Arco inutil = arcos_inutiles.get(r);
+                    this.delta.remove(inutil);                      // Y se eliminan del AFND
+                }
+                K.remove(s);                                        // Luego se elimina el estado inútil
+            }
+        }
+    }
 
+    public void print(){
+        System.out.println("States and arcos: \n");
+        for(int i = 0; i < this.K.size(); i++){
+            K.get(i).print();
+            ArrayList<Arco> a = K.get(i).getArcos();
+            for(int j = 0; j < a.size(); j++){
+                a.get(j).print();
+            }
+            System.out.print("\n");
+        }
+    }
 
 }

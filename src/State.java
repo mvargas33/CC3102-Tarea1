@@ -1,7 +1,7 @@
 import java.util.*;
 
 public class State {
-    
+
     private ArrayList<Arco> arcos;
     private int name;
     private boolean end;
@@ -49,5 +49,7 @@ public class State {
         this.end = true;
     }
 
-    
+    public void print(){
+        System.out.println(" " + getNameStr() + " ");
+    }
 }
