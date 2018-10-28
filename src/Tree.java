@@ -5,7 +5,7 @@ public class Tree {
     public Tree left;
 
     public Tree(){
-        this.name=' ';
+        this(' ');
     }
 
     public Tree(char c){

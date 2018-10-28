@@ -1,17 +1,18 @@
 import java.util.*;
+
 public class State {
+    
     private ArrayList<Arco> arcos;
     private int name;
     private boolean end;
     private boolean start;
     
     public State(int name){
-        this.name = name;
-        this.start = false;
-        this.end = false;
+        this(name, false, false);
     }
     
     public State(int name, boolean start, boolean end){
+        this.arcos = new ArrayList<>();
         this.name = name;
         this.end = end;
         this.start = start;
@@ -40,11 +41,11 @@ public class State {
         return this.arcos;
     }
 
-    public void changeToStart(){
+    public void setToStart(){
         this.start = true;
     }
 
-    public void changeToEnd(){
+    public void setToEnd(){
         this.end = true;
     }
 

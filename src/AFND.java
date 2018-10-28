@@ -1,19 +1,22 @@
 import java.util.*;
 
 public class AFND {
-    private ArrayList<State> K;
-    private ArrayList<Arco> delta;
-    private String sigma;
-    private State s;
-    private ArrayList<State> F;
-    private int q;
+    private ArrayList<State> K;     // Lista de estados
+    private ArrayList<Arco> delta;  // Lista de arcos
+    private String sigma;           // Universo de letras
+    private State s;                // Estado inicial
+    private ArrayList<State> F;     // Lista de estados finales
 
-    public AFND(){
-        this.K = null;
-        this.delta = null;
-        this.sigma = null;
-        this.s = null;
-        this.F = null;
+
+    public AFND(String sigma){
+        this(new ArrayList<>(), new ArrayList<>(), sigma, null, new ArrayList<>());
+    }
+    public AFND(ArrayList<State> K, ArrayList<Arco> delta, String sigma, State s, ArrayList<State> F){
+        this.K = K;
+        this.delta = delta;
+        this.sigma = sigma;
+        this.s = s;
+        this.F = F;
     }
 
     public ArrayList<State> getK() {
@@ -28,12 +31,6 @@ public class AFND {
     public ArrayList<State> getF() {
         return F;
     }
-    public int getQ(){
-        return q;
-    }
-
-
-
 
 
 
