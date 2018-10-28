@@ -161,6 +161,7 @@ public class AFND {
         ArrayList<State> states = this.Thompson(tree);
         this.s = states.get(0);this.s.setToStart();
         this.F.add(states.get(1));F.get(0).setToEnd();
+        this.cleanUpAFND();
     }
 
     public void print(){
@@ -177,7 +178,6 @@ public class AFND {
             for(int j = 0; j < a.size(); j++){
                 a.get(j).print();
             }
-            System.out.print("\n");
         }
     }
 

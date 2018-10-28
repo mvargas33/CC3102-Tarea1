@@ -1,21 +1,22 @@
 import java.util.ArrayList;
 
 public class AFD {
-    private ArrayList<ArrayList<State>> QState;
-    private ArrayList<Cuerda> delta;
-    private String sigma;
-    private State s;
-    private State f;
+    private ArrayList<ArrayList<State>> QState;     // Lista de QuateumStates --> QuantumState: Lista de estados
+    private ArrayList<Cuerda> delta;                // Lista de Cuerdas --> Cuerda: Arco entre QuantumStates
+    private String sigma;                           // Alfabeto
+    private State s;                                // Estado inicial
+    private ArrayList<State> F;                     // Lista de estados finales
     private int q;
 
-    public AFD(){
-        this.QState=null;
-        this.delta=null;
-        this.sigma="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 \n";
-        this.s=null;
-        this.f=null;
-        this.q=0;
+    public AFD(String sigma){
+        this.QState = new ArrayList<>();
+        this.delta = new ArrayList<>();
+        this.sigma = sigma;
+        this.s = null;
+        this.F = new ArrayList<>();
+        this.q = 0;
     }
+
     public boolean isInSigma(char c){
         int n = sigma.length();
         for(int i=0; i<n; i++){
@@ -25,6 +26,7 @@ public class AFD {
         }
         return false;
     }
+
     public void ThtoAFD(ArrayList<State> k_nd){
         int n=k_nd.size();
         if (k_nd==null){

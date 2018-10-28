@@ -21,9 +21,11 @@ public class Main {
 
         AFND nd = new AFND(universe);   // Se define el alfabeto del AFND
         nd.ERtoAFND(tri);               // Se le pasa el árbol que contiene la ER y se crea el AFND
-        nd.print();
-        nd.cleanUpAFND();
-        nd.print();
+        nd.print();                     // Print del AFND
+
+        // Creación del AFD a partir del AFND
+
+        AFD d = new AFD(universe);      // Se define el alfabeto del AFD
 
 
     }
