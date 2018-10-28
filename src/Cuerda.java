@@ -21,4 +21,8 @@ public class Cuerda {
         return from;
     }
 
+    public void print(){
+        System.out.println(from.toString() + " --- " + symbol + " ---> " + to.toString());
+    }
+
 }

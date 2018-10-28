@@ -109,4 +109,10 @@ public class AFD {
         return quantums;
     }
 
+    public void print(){
+        for(int i = 0; i < delta.size(); i++){
+            delta.get(i).print();
+        }
+    }
+
 }

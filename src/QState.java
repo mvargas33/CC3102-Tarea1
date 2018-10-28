@@ -49,4 +49,15 @@ public class QState {
     public void setEnd(){
         this.end = true;
     }
+
+    @Override
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        sb.append('{');
+        for(int i = 0; i < states.size(); i++){
+            sb.append(states.get(i).getNameStr());sb.append(',');
+        }
+        sb.append('}');
+        return sb.toString();
+    }
 }
