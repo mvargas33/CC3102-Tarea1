@@ -1,29 +1,24 @@
 import java.util.ArrayList;
 
 public class Cuerda {
-    private ArrayList<State> from;
-    private ArrayList<State> to;
+    private QState from;
+    private QState to;
     private char symbol;
 
-    public Cuerda(State from, char symbol, State to){
-        this.from.add(from);
-        this.to.add(to);
+    public Cuerda(QState from, char symbol, QState to){
+        this.from = from;
+        this.to = to;
         this.symbol = symbol;
 
     }
     public char getSymbol() {
         return symbol;
     }
-    public ArrayList<State> getTo(){
+    public QState getTo(){
         return to;
     }
-    public ArrayList<State> getFrom(){
+    public QState getFrom(){
         return from;
     }
 
-    public Cuerda(ArrayList<State> from, char symbol, ArrayList<State> to){
-        this.from=from;
-        this.to=to;
-        this.symbol=symbol;
-    }
 }

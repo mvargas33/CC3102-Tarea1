@@ -26,6 +26,7 @@ public class Main {
         // Creación del AFD a partir del AFND
 
         AFD d = new AFD(universe);      // Se define el alfabeto del AFD
+        d.AFNDtoAFD(nd);                // Se crea el AFD a partir del AFND
 
 
     }
