@@ -182,4 +182,12 @@ public class AFND {
         }
     }
 
+    public void addCyclesToStart(){
+        for(int i = 0; i < this.K.size(); i++){         // Para cada estado en el AFND
+            State s = K.get(i);                         // Rescatar el estado (incluye el inicial)
+            Arco a = new Arco(s, '#', this.s);  // Crear un arco entre el y el estado inicial con epsilon
+            this.delta.add(a);                          // Añadir el arco al AFND
+        }
+    }
+
 }
