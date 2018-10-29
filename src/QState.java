@@ -53,6 +53,7 @@ public class QState {
     public void setEnd(){
         this.end = true;
     }
+    public void setStart(){this.start = true;}
 
     @Override
     public String toString(){

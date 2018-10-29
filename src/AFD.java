@@ -35,6 +35,7 @@ public class AFD {
             QState qstate = QStates.get(i);
             ArrayList<State> s = qstate.getStates();    // Se extrae su lista de estados
             if(s.contains(estadoFinal)){                // Si contiene el estado final
+                qstate.setEnd();
                 F.add(qstate);                          // Se marca como final
             }
         }
@@ -72,8 +73,8 @@ public class AFD {
                         State to = arr.getTo();                         // Se rescata el estado de llegada
                         if(!newQState.getStates().contains(to)){        // Si newQState no contiene al estado
                             newQState.getStates().add(to);              // Se añade al estado cuantico del símbolo a newQState
-                            newQState.getStates().removeAll(scope(to)); // Se eliminan duplicados
-                            newQState.getStates().addAll(scope(to));    // Se añaden las transiciones epsilon a newQState
+                            newQState.getStates().removeAll(scope(to, new ArrayList<>())); // Se eliminan duplicados
+                            newQState.getStates().addAll(scope(to, new ArrayList<>()));    // Se añaden las transiciones epsilon a newQState
                         }
                     }
                 }
@@ -83,14 +84,17 @@ public class AFD {
                 if(check == null) {                                     // Si check es null, newQState no existe
                     this.QStates.add(newQState);                        // Se añade al AFD
                     Cuerda cuerda = new Cuerda(qState, c, newQState);   // Se crea una cuerda entre el estado cuantico original y el final con el símbolo analizado
+                    qState.getCuerdas().add(cuerda);
                     this.delta.add(cuerda);                             // Se añade la cuerda al AFD
                     QStateRecursion(newQState);                         // Se crean nuevos estados cuanticos a partir del creado, si es posible
                 }else{
                     Cuerda cuerda = new Cuerda(qState, c, check);       // Se crea una cuerda entre el estado cuantico original y el final con el símbolo analizado
+                    qState.getCuerdas().add(cuerda);
                     this.delta.add(cuerda);                             // Se añade la cuerda al AFD, no se hace recursión porque ya se hizo!
                 }
             }else{                                                      // Sino, creamos una cuerda entre el esato y el sumidero
                 Cuerda haciaSumidero = new Cuerda(qState, c, sumidero); // Se crea la cuerda hacia el sumidero con el símbolo
+                qState.getCuerdas().add(haciaSumidero);
                 delta.add(haciaSumidero);                               // Se añade la cuerda hacia el sumidero al AFD
             }
         }
@@ -99,10 +103,11 @@ public class AFD {
     public void AFNDtoAFD(AFND nd){
         State estadoInicial = nd.getS();                                // Se rescata el estado inicial del AFND
         QState qState = new QState(this.QStates.size(), estadoInicial); // Se crea un estado cúantico con el estado como base
-        s = qState;                                                     // Se declara como estado inicial
-        qState.getStates().removeAll(scope(estadoInicial));             // Eliminar duplicados
-        qState.getStates().addAll(scope(estadoInicial));                // Se añaden las transiciones epsilon al estado cuantico
+        qState.getStates().removeAll(scope(estadoInicial, new ArrayList<>()));  // Eliminar duplicados
+        qState.getStates().addAll(scope(estadoInicial, new ArrayList<>()));     // Se añaden las transiciones epsilon al estado cuantico
         this.QStates.add(qState);                                       // Se añade el estado cuantico a AFD
+        this.s = qState;                                                     // Se declara como estado inicial
+        this.s.setStart();
         QStateRecursion(qState);                                        // Se generan los estados cuanticos creados a partir de qState
         ArrayList<State> f = nd.getF();                                 // Se extraen los estados finales
         for(int i = 0; i < f.size(); i++){                              // Para cada estado final del AFND
@@ -112,20 +117,33 @@ public class AFD {
 
 
     // Retorna una lista de estados correspondiente a las transiciones epsilon de un estado
-    public ArrayList<State> scope(State state){
-        ArrayList<Arco> arcs = state.getArcos();        // Se obtienen los arcos de el estado
-        ArrayList<State> quantums = new ArrayList<>();  // Se crea una lista de estados
-        quantums.add(state);                            // Se añade el estado actual
-        for (int a =0; a < arcs.size(); a++){           // Para cada arco en un estado
+    public ArrayList<State> scope(State state, ArrayList<State> quantums){
+        if(!quantums.contains(state)) {
+            quantums.add(state);                            // Se añade el estado actual
+        }
+        ArrayList<Arco> arcs = state.getArcos();            // Se obtienen los arcos de el estado
+        for (int a =0; a < arcs.size(); a++){               // Para cada arco en un estado
             Arco arc = arcs.get(a);
-            State fin = arc.getTo();
+            State fin = arc.getTo();                        // Se obtiene el estado de llegada
             if (arc.getSymbol() == '#' && !quantums.contains(fin)){ // Si hay un arco con epsilon y la llegada no la agregué antes
-                quantums.add(fin);                      // Se añade el estado de llegada
-                quantums.removeAll(scope(fin));         // Se eliminan duplicados
-                quantums.addAll(scope(fin));            // Añadir recursivamente las transciciones a partir de llegada
+                quantums.add(fin);                          // Se añade el estado de llegada
+                //quantums.removeAll(scope(fin, quantums));   // Se eliminan duplicados
+                quantums.addAll(scope(fin, quantums));      // Añadir recursivamente las transciciones a partir de llegada
+                quantums = eliminarRepetidos(quantums);
             }
         }
+
         return quantums;
+    }
+
+    public ArrayList<State> eliminarRepetidos(ArrayList<State> estados){
+        ArrayList<State> s = new ArrayList<>();
+        for(State estado : estados){
+            if(!s.contains(estado)){
+                s.add(estado);
+            }
+        }
+        return s;
     }
 
     public void print(){
@@ -139,6 +157,30 @@ public class AFD {
         for(int i = 0; i < delta.size(); i++){
             delta.get(i).print();
         }
+    }
+
+    public ArrayList<Integer> run(String texto){
+        ArrayList<Integer> marcas = new ArrayList<>();              // Lista vacía de marcas en el texto
+        QState estadoActual = this.s;                               // Se comienza en estado inicial
+        int posicionActual = 0;                                     // Posición actual del caracter que se lee del texto
+        int posicionFinal = texto.length() - 1;                     // Posición final del caracter del texto
+        while(posicionActual <= posicionFinal){                     // Hasta que no se recorra el texto completo
+            ArrayList<Cuerda> cuerdas = estadoActual.getCuerdas();  //
+            char s = texto.charAt(posicionActual);
+            for(int j = 0; j < cuerdas.size(); j++){
+                Cuerda c = cuerdas.get(j);
+                if(c.getSymbol() == s){
+                    estadoActual = c.getTo();break;
+                }else if(c.getSymbol() == '$'){
+                    estadoActual = c.getTo();break;
+                }
+            }
+            if(estadoActual.isEnd()){
+                marcas.add(posicionActual);
+            }
+            posicionActual++;
+        }
+        return marcas;
     }
 
 }

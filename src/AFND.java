@@ -182,11 +182,34 @@ public class AFND {
         }
     }
 
-    public void addCyclesToStart(){
+    public void addLoopsToStart(){
         for(int i = 0; i < this.K.size(); i++){         // Para cada estado en el AFND
             State s = K.get(i);                         // Rescatar el estado (incluye el inicial)
             Arco a = new Arco(s, '#', this.s);  // Crear un arco entre el y el estado inicial con epsilon
+            s.getArcos().add(a);                        // Se añade el arco al estado
             this.delta.add(a);                          // Añadir el arco al AFND
+        }
+    }
+
+    public void reverse(){
+        State ini=this.s;
+        State fin=F.get(0);
+        this.s=fin;
+        this.F=new ArrayList<State>();
+        this.F.add(ini);
+
+        int n = this.K.size();
+        for (int i=0; i<n; i++){
+            State state=K.get(i);
+            int n2=state.getArcos().size();
+            for (int j=0; j<n2; j++){
+                Arco arc= state.getArcos().get(j);
+                State init= arc.getFrom();
+                State fina= arc.getTo();
+                arc.setTo(init);
+                arc.setFrom(fina);
+
+            }
         }
     }
 

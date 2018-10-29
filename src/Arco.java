@@ -20,6 +20,8 @@ public class Arco {
     public State getFrom(){
         return from;
     }
+    public void setTo(State state){ this.to = state; }
+    public void setFrom(State state){this.from = state;}
 
     public void print(){
         System.out.println(this.from.getNameStr() + " -- " + this.symbol + " --> " + this.to.getNameStr());

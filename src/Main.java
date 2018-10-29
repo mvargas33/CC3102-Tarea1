@@ -3,6 +3,7 @@ import java.util.*;
 public class Main {
 
     public static void main(String args []){
+        String texto = "ababababab";
 
         // Recepción del input de la expresión regular
 
@@ -21,13 +22,18 @@ public class Main {
 
         AFND nd = new AFND(universe);   // Se define el alfabeto del AFND
         nd.ERtoAFND(tri);               // Se le pasa el árbol que contiene la ER y se crea el AFND
-        nd.print();                     // Print del AFND
+        //nd.print();                     // Print del AFND
+        nd.addLoopsToStart();           // Se añaden los loops al inicio
+        //nd.print();
+        //nd.reverse();
+        //nd.print();
 
         // Creación del AFD a partir del AFND
 
         AFD d = new AFD(universe);      // Se define el alfabeto del AFD
         d.AFNDtoAFD(nd);                // Se crea el AFD a partir del AFND
         d.print();                      // Print de AFD
+        System.out.println(d.run(texto));
 
 
     }
