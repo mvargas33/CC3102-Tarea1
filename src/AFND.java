@@ -32,6 +32,7 @@ public class AFND {
         return F;
     }
 
+    public String getSigma(){return sigma;}
 
 
     public boolean isInSigma(char c){
@@ -169,13 +170,13 @@ public class AFND {
         System.out.println("Estado inicial: " + this.s.getNameStr());
         StringBuilder finales = new StringBuilder();
         for(int y = 0; y < this.F.size(); y++){
-            finales.append(F.get(y).getNameStr());finales.append(" ");
+            finales.append(this.F.get(y).getNameStr());finales.append(" ");
         }
         System.out.println("Estado final  : " + finales.toString());
 
         for(int i = 0; i < this.K.size(); i++){
             //K.get(i).print();
-            ArrayList<Arco> a = K.get(i).getArcos();
+            ArrayList<Arco> a = this.K.get(i).getArcos();
             for(int j = 0; j < a.size(); j++){
                 a.get(j).print();
             }
@@ -195,21 +196,24 @@ public class AFND {
         State ini=this.s;
         State fin=F.get(0);
         this.s=fin;
+        s.setToStart();
+        s.disableEnd();
         this.F=new ArrayList<State>();
         this.F.add(ini);
+        ini.setToEnd();
+        ini.disableStart();
 
         int n = this.K.size();
         for (int i=0; i<n; i++){
-            State state=K.get(i);
-            int n2=state.getArcos().size();
-            for (int j=0; j<n2; j++){
-                Arco arc= state.getArcos().get(j);
-                State init= arc.getFrom();
-                State fina= arc.getTo();
-                arc.setTo(init);
-                arc.setFrom(fina);
-
+            State state = K.get(i);
+            ArrayList<Arco> arcosEliminados = new ArrayList<>();
+            for (int j = 0; j < state.getArcos().size(); j++){
+                Arco arc = state.getArcos().get(j);
+                Arco nuevo = new Arco(arc.getTo(), arc.getSymbol(), arc.getFrom());
+                arc.getTo().addArco(nuevo);
+                arcosEliminados.add(arc);
             }
+            state.getArcos().removeAll(arcosEliminados);
         }
     }
 

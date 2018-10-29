@@ -49,6 +49,9 @@ public class State {
         this.end = true;
     }
 
+    public void disableEnd(){this.end = false;}
+    public void disableStart(){this.start = false;}
+
     public void print(){
         System.out.println(getNameStr());
     }

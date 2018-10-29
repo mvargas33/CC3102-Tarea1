@@ -31,12 +31,13 @@ public class AFD {
     }
 
     public void iterativeFinalQState(State estadoFinal){
+        int a = QStates.size();
         for(int i = 0; i < QStates.size(); i++){        // Para cada QState en el AFD
             QState qstate = QStates.get(i);
             ArrayList<State> s = qstate.getStates();    // Se extrae su lista de estados
             if(s.contains(estadoFinal)){                // Si contiene el estado final
                 qstate.setEnd();
-                F.add(qstate);                          // Se marca como final
+                this.F.add(qstate);                          // Se marca como final
             }
         }
     }
