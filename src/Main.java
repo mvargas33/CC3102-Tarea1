@@ -2,20 +2,14 @@ import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.util.*;
 import java.io.*;
-import java.nio.file.*;
 
 public class Main {
 
     public static void main(String args []){
-        String texto = readAllBytesJava7("./input.txt");    // Arreglar
-        System.out.println(texto);
+        //String texto = fileToString();
+        String texto = fileToString("src/input.txt");
 
-        // Recepción del input de la expresión regular
-
-        Scanner sc = new Scanner(System.in);
-        String s = sc.nextLine();
-        String [] input = s.split("\n");
-        char [] reg_exp = input[0].toCharArray(); // Regular expresion
+        char[] reg_exp = inputToCharArray();
 
         // Declaración del alfabeto y creación de un árbol de la Expresión Regular
 
@@ -58,22 +52,60 @@ public class Main {
         }*/
 
         ArrayList<int[]> intervalos = getIntervalos(marcasIniciales, marcasFinales);
-        printIntervalos(intervalos);
+        printIntervalos(intervalos, texto);
 
 
     }
 
-    private static String readAllBytesJava7(String filePath){
-        String content = "";
-        try
-        {
-            content = new String ( Files.readAllBytes(Paths.get(filePath) ) );
+    public static String fileToString(){
+        BufferedWriter bw = null;
+        FileWriter fw = null;
+        try {
+            try {
+                Scanner sc = new Scanner(System.in);
+                System.out.println("Ingresar RUTA de archivo de texto .txt, ejemplo: 'src/'");
+                String ruta = sc.nextLine();
+                System.out.println("Ingresar NOMBRE de archivo de texto .txt, ejemplo: 'input.txt'");
+                String archivo = sc.nextLine();
+                FileInputStream fis = new FileInputStream(ruta + archivo);
+                byte data[] = new byte[fis.available()];
+                fis.read(data);
+                fis.close();
+                return new String(data);
+            } catch (Exception e) {
+                e.printStackTrace(); // Si hay error se imprime
+            }
+        }catch(Exception e) {
+            e.printStackTrace(); // Si hay error se imprime
         }
-        catch (IOException e)
-        {
-            e.printStackTrace();
+        return "";
+    }
+
+    public static String fileToString(String archivo){
+        BufferedWriter bw = null;
+        FileWriter fw = null;
+        try {
+            try {
+                FileInputStream fis = new FileInputStream(archivo);
+                byte data[] = new byte[fis.available()];
+                fis.read(data);
+                fis.close();
+                return new String(data);
+            } catch (Exception e) {
+                e.printStackTrace(); // Si hay error se imprime
+            }
+        }catch(Exception e) {
+            e.printStackTrace(); // Si hay error se imprime
         }
-        return content;
+        return "";
+    }
+
+    public static char[] inputToCharArray(){
+        System.out.println("Ingresar la expresión regular en correcta notación, ejemplo: |..aza*.tx");
+        Scanner sc = new Scanner(System.in);
+        String s = sc.nextLine();
+        String [] input = s.split("\n");
+        return input[0].toCharArray(); // Regular expresion
     }
 
     public static ArrayList<int[]> getIntervalos(ArrayList<Integer> inicios, ArrayList<Integer> finales){
@@ -88,10 +120,19 @@ public class Main {
         return intervalos;
     }
 
-    public static void printIntervalos(ArrayList<int[]> intervalos){
+    public static void printIntervalos(ArrayList<int[]> intervalos, String texto){
         for(int i = 0; i < intervalos.size(); i++){
             int[] t = intervalos.get(i);
-            System.out.print('[' + String.valueOf(t[0]) + ',' + String.valueOf(t[1]) + ']' + ' ');
+            StringBuilder s = new StringBuilder();
+            for(int j = t[0]; j <= t[1]; j++){
+                s.append(texto.charAt(j));
+            }
+            String intervalo = "[ " + String.valueOf(t[0]) + "," + String.valueOf(t[1]) + " ]";
+            if(intervalo.length() <= 7) {
+                System.out.println("[ " + String.valueOf(t[0]) + "," + String.valueOf(t[1]) + " ]" + "\t\t: " + s.toString());
+            }else{
+                System.out.println("[ " + String.valueOf(t[0]) + "," + String.valueOf(t[1]) + " ]" + "\t: " + s.toString());
+            }
         }
     }
 }
