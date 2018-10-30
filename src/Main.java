@@ -1,10 +1,14 @@
 import java.lang.reflect.Array;
+import java.nio.file.Files;
 import java.util.*;
+import java.io.*;
+import java.nio.file.*;
 
 public class Main {
 
     public static void main(String args []){
-        String texto = "ainasduikscnjaerreeeeeeeer";
+        String texto = readAllBytesJava7("./input.txt");    // Arreglar
+        System.out.println(texto);
 
         // Recepción del input de la expresión regular
 
@@ -59,12 +63,17 @@ public class Main {
 
     }
 
-    public static String reverseString(String string){
-        StringBuilder s = new StringBuilder();
-        for(int i = string.length() - 1; i >= 0; i--){
-            s.append(string.charAt(i));
+    private static String readAllBytesJava7(String filePath){
+        String content = "";
+        try
+        {
+            content = new String ( Files.readAllBytes(Paths.get(filePath) ) );
         }
-        return s.toString();
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        return content;
     }
 
     public static ArrayList<int[]> getIntervalos(ArrayList<Integer> inicios, ArrayList<Integer> finales){
