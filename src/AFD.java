@@ -166,20 +166,55 @@ public class AFD {
         int posicionActual = 0;                                     // Posición actual del caracter que se lee del texto
         int posicionFinal = texto.length() - 1;                     // Posición final del caracter del texto
         while(posicionActual <= posicionFinal){                     // Hasta que no se recorra el texto completo
+            //System.out.println(estadoActual.toString());
             ArrayList<Cuerda> cuerdas = estadoActual.getCuerdas();  //
             char s = texto.charAt(posicionActual);
+            //System.out.println(s);
             for(int j = 0; j < cuerdas.size(); j++){
                 Cuerda c = cuerdas.get(j);
                 if(c.getSymbol() == s){
+                    //System.out.println(c.getTo().toString());
                     estadoActual = c.getTo();break;
                 }else if(c.getSymbol() == '$'){
+                    //estadoActual = this.s;break;
                     estadoActual = c.getTo();break;
                 }
             }
             if(estadoActual.isEnd()){
-                marcas.add(posicionActual);
+                marcas.add(posicionActual);   // Vuelve al estado inicial
+                //System.out.println("Se añade marca!");
+                estadoActual = this.s;
+            }else if(estadoActual.getName() == -1){
+                estadoActual = this.s;
             }
             posicionActual++;
+        }
+        return marcas;
+    }
+
+    public ArrayList<Integer> runReverse(String texto, ArrayList<Integer> marcasFinales){
+        ArrayList<Integer> marcas = new ArrayList<>();              // Lista vacía de marcas en el texto
+        QState estadoActual;
+        int posicion;
+        for(int i = 0; i < marcasFinales.size(); i++){
+            estadoActual = this.s;                               // Se comienza en estado inicial
+            posicion = marcasFinales.get(i);
+            while(posicion >= 0){                     // Hasta que no se recorra el texto completo
+                ArrayList<Cuerda> cuerdas = estadoActual.getCuerdas();  //
+                char s = texto.charAt(posicion);
+                for(int j = 0; j < cuerdas.size(); j++){
+                    Cuerda c = cuerdas.get(j);
+                    if(c.getSymbol() == s){
+                        estadoActual = c.getTo();break;
+                    }else if(c.getSymbol() == '$'){
+                        estadoActual = c.getTo();break;
+                    }
+                }
+                if(estadoActual.isEnd()){
+                    marcas.add(posicion);break;
+                }
+                posicion--;
+            }
         }
         return marcas;
     }

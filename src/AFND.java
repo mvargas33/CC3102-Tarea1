@@ -118,15 +118,15 @@ public class AFND {
             Arco arc1 = new Arco(start, '#', start_end_left.get(0));
             Arco arc2 = new Arco(start_end_left.get(1), '#', start_end_left.get(0));
             Arco arc3 = new Arco(start_end_left.get(1), '#', end);
-            Arco arc4 = new Arco(start, '#', end);
+            //Arco arc4 = new Arco(start, '#', end);
             start.addArco(arc1);
             start_end_left.get(1).addArco(arc2);
             start_end_left.get(1).addArco(arc3);
-            start.addArco(arc4);
+            //start.addArco(arc4);
             this.delta.add(arc1);
             this.delta.add(arc2);
             this.delta.add(arc3);
-            this.delta.add(arc4);
+            //this.delta.add(arc4);
             start_end.add(start);
             start_end.add(end);
             return start_end;
@@ -192,29 +192,43 @@ public class AFND {
         }
     }
 
+    public void setF(ArrayList<State> list){this.F=list;}
+
     public void reverse(){
         State ini=this.s;
         State fin=F.get(0);
+        fin.setToStart();
+        fin.disableEnd();
         this.s=fin;
-        s.setToStart();
-        s.disableEnd();
-        this.F=new ArrayList<State>();
-        this.F.add(ini);
+
+        ArrayList<State> list=new ArrayList<State>();
+        list.add(ini);
         ini.setToEnd();
         ini.disableStart();
+        this.setF(list);
+
 
         int n = this.K.size();
-        for (int i=0; i<n; i++){
-            State state = K.get(i);
-            ArrayList<Arco> arcosEliminados = new ArrayList<>();
-            for (int j = 0; j < state.getArcos().size(); j++){
-                Arco arc = state.getArcos().get(j);
-                Arco nuevo = new Arco(arc.getTo(), arc.getSymbol(), arc.getFrom());
-                arc.getTo().addArco(nuevo);
+        ArrayList<Arco> arcosNuevos = new ArrayList<>();
+        for (int i=0; i<n; i++){                                    //para cada estado
+            State state = K.get(i);                                  //el estado a cambiar
+            ArrayList<Arco> arcosEliminados = new ArrayList<>();       // se crea lista de arcos que se removeran
+            for (int j = 0; j < state.getArcos().size(); j++){                 //para cada arco del estado
+                Arco arc = state.getArcos().get(j);                         //obtengo el arco
+
+                arcosNuevos.add(new Arco(arc.getTo(), arc.getSymbol(), arc.getFrom()));  //se crea arco al reves
                 arcosEliminados.add(arc);
             }
+
             state.getArcos().removeAll(arcosEliminados);
         }
+
+        for (int j = 0; j < arcosNuevos.size(); j++){
+            Arco arquito = arcosNuevos.get(j);
+            arquito.getFrom().addArco(arquito);
+            this.delta.add(arquito);
+        }
+
     }
 
 }
